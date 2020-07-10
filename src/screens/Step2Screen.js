@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { View, SafeAreaView, StatusBar, FlatList, Text, TouchableOpacity, Platform,Image, } from 'react-native';
+import { View, SafeAreaView, StatusBar, FlatList, Platform, } from 'react-native';
 import styles from '../styles/Step2Styles'
-import { Card,  } from "react-native-elements";
+
 import COLOR from '../styles/Color';
 // import Fonts from '../constants/FontNames';
 import Strings from '../data/Strings';
 import Header from '../components/Header'
-import * as Images from '../data/Images';
+import Row from '../components/Row'
+import { TextView } from '../components/TextView'
+import { MyButton } from '../components/MyButton'
 import listData from '../data/ListData'
 
 export default class Step2Screen extends React.Component {
@@ -21,11 +23,12 @@ export default class Step2Screen extends React.Component {
     componentDidMount() {
 
     }
-    onProfilePress = (item) => {
+
+    onRowClick = (id) => {
 
         let listData = [...this.state.data];
         for (let data of listData) {
-            if (data.id == item.id) {
+            if (data.id == id) {
 
                 data.selected = (data.selected == null) ? true : !data.selected;
                 break;
@@ -42,67 +45,30 @@ export default class Step2Screen extends React.Component {
                 barStyle={Platform.OS == 'ios' ? "dark-content" : "light-content"} />
             <SafeAreaView style={styles.container}>
 
-                {this.renderHeader()}
-                {this.renderHeading()}
-                {this.renderSubHeading()}
-                
+                <Header totalSteps="7" currentStep="2" ></Header>
+
+                <TextView style={styles.heading} text={Strings.HEADING}></TextView>
+                <TextView style={styles.subHeading} text={Strings.SUB_HEADING}></TextView>
+
+
                 <FlatList
                     style={{ marginBottom: 70, }}
                     data={this.state.data}
-                    renderItem={({ item }) => this.renderItemOnBasisOfType(item)}
+                    renderItem={({ item }) => this.renderRow(item)}
                     keyExtractor={item => `${item.id}`}
                 />
-                {this.renderButton()}
+                <MyButton
+                    onClick={() => alert("I'm working")}
+                    title={Strings.BTN_TITLE} />
             </SafeAreaView>
         </View>
     }
+    renderRow = (item) => {
 
+        return <Row
+            item={item}
+            itemClick={(id) => this.onRowClick(id)}></Row>
 
-    renderHeader = () => {
-        return <Header totalSteps="7" currentStep="2" ></Header>
-
-    }
-
-    renderHeading = () => {
-        return <Text style={styles.heading}>{Strings.HEADING}</Text>
-
-    }
-    renderSubHeading = () => {
-        return <Text style={styles.subHeading}>{Strings.SUB_HEADING}</Text>
-
-    }
-
-    renderButton = () => {
-        return <TouchableOpacity style={styles.button} onPress={() =>
-            this.onProfilePress(item)}>
-            <Text style={styles.buttonText}>Weiter</Text>
-        </TouchableOpacity>
-    }
-
-    renderCheckUncheck = (isSelected) => {
-        return   <Image style={styles.checkUncheck} source={isSelected == true ?Images.check:Images.uncheck} />
-    }
-
-    renderItemOnBasisOfType = (item) => {
-
-
-        const isSelected = item.selected
-
-        return <TouchableOpacity onPress={() =>
-            this.onProfilePress(item)}>
-            <Card
-
-                containerStyle={styles.cardContainer}>
-                <View style={[styles.cardInnerContainer,{backgroundColor: isSelected == true ? COLOR.TRANS_WHITE : COLOR.WHITE,}]} >
-                {this.renderCheckUncheck(isSelected)}
-                    <Text style={[styles.cardText,{fontWeight: isSelected == true ? 'bold' : 'normal' }]}>{item.name}</Text>
-
-                </View>
-
-
-            </Card>
-
-        </TouchableOpacity>
 
     }
 }
